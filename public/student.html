@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>学生管理 </title>
+	<link rel="stylesheet" href="stylesheets/style.css">
+	<script>
+		var ajax = {
+			post:function(url,data,handler){
+				var request = new XMLHttpRequest();
+				request.open('POST',url,true);
+				request.setRequestHeader("Content-Type","application/json");
+				request.send(JSON.stringify(data));
+				request.onreadystatechange = function(){
+					if(request.readyState == 4){
+						if(request.status ==200){
+							var text = request.responseText;
+							var json = JSON.parse(text);
+							handler.call(this,json);
+						}
+					}
+				}
+			},
+			getJSON:function(url,handler){
+				var request = new XMLHttpRequest();
+				request.open('GET',url,true);
+				request.send();
+				request.onreadystatechange = function(){
+					if(request.readyState == 4){
+						if(request.status ==200){
+							var text = request.responseText;
+							var json = JSON.parse(text);
+							handler.call(this,json);
+						}
+					}
+				}
+			}
+		}
+
+
+
+
+		var studentAPI = {
+			//批量删除
+			baychDelete:function(){},
+			//加载数据
+			loadData:function (data){
+				//清空原有数据
+				var tbody = document.getElementsByTagName("tbody")[0];
+				///////////////////////////
+				Array.prototype.slice.call(tbody.children,0).forEach(function(item){
+					tbody.removeChild(item);
+				});
+				//加载数据
+				ajax.getJSON("http://localhost:3000/student/findAll",function(data){
+					data.forEach(function(item){
+					var tbody = document.getElementsByTagName('tbody')[0];
+					var newTr = document.createElement('tr');
+
+					var newTd1 = document.createElement('td');
+					newTd1.innerHTML = "<input type='checkbox' value='"+item.id+"'>";
+					var newTd2 = document.createElement('td');
+					newTd2.innerText = item.name;
+					var newTd3 = document.createElement('td');
+					newTd3.innerText = item.gender;
+					var newTd4 = document.createElement('td');
+					newTd4.innerText = item.birth;
+
+					newTr.appendChild(newTd1);
+					newTr.appendChild(newTd2);
+					newTr.appendChild(newTd3);
+					newTr.appendChild(newTd4);
+					tbody.appendChild(newTr);
+					});
+				});
+			}
+		}
+		window.onload = function(){
+			var form = document.forms[0];
+			form.onsubmit =function(event){		
+				studentAPI.loadData();		
+				event.preventDefault();
+			}
+		}
+
+		
+	</script>
+</head>
+<body>
+	<h2>student</h2>
+	<hr>
+	<form action="student/findAll" method="get">
+		<input type="search" placeholder="请输入 " id="search" name="key">
+		<input type="submit" value="搜索">
+	</form>
+		<table>
+			<thead>
+				<tr>
+					<th>no</th>
+					<th>name</th>
+					<th>gender</th>
+					<th>birth</th>
+				</tr>
+			</thead>
+			<tbody>	
+			</tbody>
+		</table>
+		<button>添加</button>
+		<button>修改</button>
+		<button>删除</button>
+</body>
+</html>
