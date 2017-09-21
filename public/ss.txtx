@@ -1,0 +1,43 @@
+var search  = document.getElementById('search');
+				var param = {key:search.value}
+				//ajax
+				var action = form.action;
+				var request = new XMLHttpRequest();
+				request.open('GET',action,true);
+				request.send();
+				//监听就绪状态的改变，当readyState（就绪状态码：0,1,2,3,4）的取值为4的时候，代表一次请求的完成
+				request.onreadystatechange = function(){
+					if(request.readyState == 4){
+						//响应码，对方给的回应
+						if(request.status == 200){
+							var data =JSON.parse(request.responseText);//回应信息
+							updateData(data);
+							
+						}
+					}
+				}
+
+
+
+                function updateData(data){
+			data.forEach(function(item){
+				var tbody = document.getElementsByTagName('tbody')[0];
+				var newTr = document.createElement('tr');
+
+				var newTd1 = document.createElement('td');
+				newTd1.innerText = item.id;
+				var newTd2 = document.createElement('td');
+				newTd2.innerText = item.name;
+				var newTd3 = document.createElement('td');
+				newTd3.innerText = item.gender;
+				var newTd4 = document.createElement('td');
+				newTd4.innerText = item.birth;
+
+				newTr.appendChild(newTd1);
+				newTr.appendChild(newTd2);
+				newTr.appendChild(newTd3);
+				newTr.appendChild(newTd4);
+				tbody.appendChild(newTr);
+			});
+		}
+
